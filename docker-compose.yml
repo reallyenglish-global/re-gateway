@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gateway
+    image: gateway
+    ports:
+      - "8090:80"
+      - "8081:8081"
+      - "8082:8082"
+    networks:
+      - re-network
+    restart: always
+    volumes:
+      - "./nginx/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf"
+
+networks:
+  re-network:
+    ipam:
+      config:
+        - subnet: 172.22.0.0/16
