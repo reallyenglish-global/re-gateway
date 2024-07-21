@@ -3,7 +3,7 @@ LABEL maintainer "joeyw <joeyw@reallyenglish.com>"
 
 RUN apk add --no-cache curl perl
 RUN opm get leafo/pgmoon \
-    && opm get lua-resty-session
+    && opm get openresty/lua-resty-redis
 
 
 EXPOSE 80

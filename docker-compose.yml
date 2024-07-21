@@ -1,24 +1,39 @@
-version: "3.7"
-
 services:
+  db:
+    image: postgres:16.3-alpine
+    container_name: db
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=gateway_dev
+      - POSTGRES_HOST_AUTH_METHOD=trust
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      - rds:/data
   gateway:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: gateway
     image: gateway
+    depends_on:
+      - db
+      - redis
     ports:
       - "8090:80"
       - "8081:8081"
-      - "8082:8082"
-    networks:
-      - re-network
     restart: always
     volumes:
-      - "./nginx/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf"
+      - "./conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf"
 
+volumes:
+  db:
+    driver: local
+  rds:
+    driver: local
 networks:
-  re-network:
-    ipam:
-      config:
-        - subnet: 172.22.0.0/16
+  default:
+    external: true
+    name: re-network
